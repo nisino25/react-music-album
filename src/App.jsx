@@ -6,6 +6,7 @@ import AlbumContainer from './components/AlbumContainer';
 
 function App() {
   const moods = [
+    { name: 'Everything', emoji: '🌀' },
     { name: 'Morning', emoji: '🌞' },
     { name: 'Work', emoji: '💼' },
     { name: 'Workout', emoji: '🏋️‍♂️' },
@@ -28,7 +29,13 @@ function App() {
   return (
     <>
       <MoodTabs moods={moods} selectedMood={selectedMood} onChangeMood={setSelectedMood}/>
-      <AlbumContainer albums={fetchedAlbumsData.filter((album) => album.mood === selectedMood.name)} />
+      <AlbumContainer
+        albums={
+          selectedMood.name === 'Everything'
+            ? fetchedAlbumsData
+            : fetchedAlbumsData.filter((album) => album.mood === selectedMood.name)
+        }
+      />
       {/* <button onClick={() => setSearchOpen(true)}>🔍</button>
       {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />} */}
     </>
