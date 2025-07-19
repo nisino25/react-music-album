@@ -1,11 +1,11 @@
 function MoodTabs({ moods, selectedMood, onChangeMood }) {
   return (
-    <div className="flex gap-4 justify-center mb-6">
+    <div className="flex gap-3 justify-center mb-6">
       {moods.map((mood) => (
         <button
           key={mood.name}
           onClick={() => onChangeMood(mood)}
-          className={`text-3xl px-4 py-2 rounded-full transition 
+          className={`text-2xl px-3 py-2 rounded-full transition 
             ${mood.name === selectedMood.name 
               ? 'bg-gray-200 shadow-md' 
               : 'hover:bg-gray-100'
