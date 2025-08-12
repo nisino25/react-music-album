@@ -4,12 +4,11 @@ function AlbumContainer({ albums }) {
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-12 p-4 px-20">
       {albums.map((album, idx) => (
-        <div key={idx} className="bg-white rounded shadow p-4 text-center">
+        <div key={idx} className="bg-white rounded-lg shadow text-center overflow-hidden">
           <a href={album.url}>
             <img src={album.imgSrc} alt="" />
-            <div className="text-lg font-semibold text-grey">{album.name}</div>
           </a>
         </div>
       ))}

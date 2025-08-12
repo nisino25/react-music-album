@@ -1,46 +1,79 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MoodTabs from './components/MoodTabs';
 import AlbumContainer from './components/AlbumContainer';
-// import SearchModal from './components/SearchModal';
-
+import './loader.css'; // we’ll put your loader CSS here
 
 function App() {
-  const moods = [
-    { name: 'Everything', emoji: '🌀' },
-    { name: 'Morning', emoji: '🌞' },
-    { name: 'Work', emoji: '💼' },
-    { name: 'Workout', emoji: '🏋️‍♂️' },
-    { name: 'Dance', emoji: '💃' },
-    { name: 'Relax', emoji: '☕' },
-  ];
-  const [selectedMood, setSelectedMood] = useState(moods[0]);
-  
-  const [fetchedAlbumsData, setFetchedAlbumsData] = useState([
-    { name: 'Test', url: 'test.com' },
-    { name: 'trial', url: 'try.com' },
-    { name: 'Yes!', artist: 'Jason Mraz', mood: 'Relax', url: 'https://music.apple.com/us/album/yes/877925874', imgSrc: 'https://is1-ssl.mzstatic.com/image/thumb/Video126/v4/7e/f9/11/7ef91190-90c0-2a8e-bbc0-aaefad222b79/Jobe698db8a-dd5d-433f-875d-c780dc5733f4-153268312-PreviewImage_Preview_Image_Intermediate_nonvideo_sdr_292525350_1511505095-Time1690232118486.png/592x592bb.webp'},
-    { name: 'No Flowers', artist: 'Jason Mraz', mood: 'Relax', url: 'https://music.apple.com/us/album/no-flowers-single/1705296769', imgSrc: 'https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/f1/54/ed/f154eddc-d4b7-f53e-87fd-93c89333900c/811877.jpg/592x592bb.webp'},
-    { name: 'Minecraft', artist: 'C418', mood: 'Relax', url: 'https://music.apple.com/jp/album/minecraft-volume-alpha/424968465', imgSrc: 'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/08/11/31/08113125-d66e-1f90-65d9-08e28000495c/859705593825_cover.jpg/592x592bb.webp'},
-    { name: 'Now That the Light Is Fading', artist: 'Maggie Rogers', mood: 'Morning', url: 'https://music.apple.com/jp/album/now-that-the-light-is-fading-ep/1440897454?l=en-US', imgSrc: 'https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/dd/66/99/dd6699ee-e293-0178-eb66-fc38d00933ee/16UMGIM88298.rgb.jpg/592x592bb.webp'},
-    { name: 'Donuts and Pizza (feat. george isaac)', artist: 'Rob S Max', mood: 'Dance', url: 'https://music.apple.com/us/album/donuts-and-pizza-feat-george-isaac-single/1667691353', imgSrc: 'https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/16/ae/4c/16ae4c25-d6c8-5f1e-db0f-feba3b82bc76/artwork.jpg/592x592bb.webp'},
-  ]);
-  const [searchOpen, setSearchOpen] = useState(false);
+    const moods = [
+        { name: 'Everything', emoji: '🌀' },
+        { name: 'Morning', emoji: '🌞' },
+        { name: 'Work', emoji: '💼' },
+        { name: 'Workout', emoji: '🏋️‍♂️' },
+        { name: 'Dance', emoji: '💃' },
+        { name: 'Relax', emoji: '☕' },
+    ];
 
+    const [selectedMood, setSelectedMood] = useState(moods[0]);
+    const [fetchedAlbumsData, setFetchedAlbumsData] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-  return (
-    <>
-      <MoodTabs moods={moods} selectedMood={selectedMood} onChangeMood={setSelectedMood}/>
-      <AlbumContainer
-        albums={
-          selectedMood.name === 'Everything'
-            ? fetchedAlbumsData
-            : fetchedAlbumsData.filter((album) => album.mood === selectedMood.name)
-        }
-      />
-      {/* <button onClick={() => setSearchOpen(true)}>🔍</button>
-      {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />} */}
-    </>
-  )
+    const baseUrl = 'https://script.google.com/macros/s/AKfycbxDJS4AQ5WxT8lLrz5qwtiPOOKtW87l6PWkeVT9B3VCD0GAIrFQ_VfF_ChvEBae8JvO4A/exec'; // replace with your API URL
+
+    useEffect(() => {
+        setLoading(true);
+
+        const url = `${baseUrl}?callback=jsonpCallback&action=fetchData`;
+
+        window.jsonpCallback = (data) => {
+            console.log('API Response (fetchData):', data);
+            if (data.success) {
+                const sorted = data.data.sort((a, b) => b.lastPlayedAt - a.lastPlayedAt);
+                setFetchedAlbumsData(sorted);
+            } else {
+                console.error('Error fetching data:', data.message);
+            }
+            setLoading(false);
+        };
+
+        const script = document.createElement('script');
+        script.src = url;
+        script.async = true;
+        document.body.appendChild(script);
+
+        script.onload = () => {
+            document.body.removeChild(script);
+        };
+
+        return () => {
+            delete window.jsonpCallback;
+        };
+    }, []);
+
+    return (
+    <div className="min-h-screen bg-neutral-900">
+        {loading ? (
+            <div className="fixed inset-0 flex items-center justify-center">
+                <span className="loader" role="status" aria-label="Loading"></span>
+            </div>
+        ) : (
+            <>
+                <MoodTabs
+                    moods={moods}
+                    selectedMood={selectedMood}
+                    onChangeMood={setSelectedMood}
+                />
+                <AlbumContainer
+                    albums={
+                        selectedMood.name === 'Everything'
+                            ? fetchedAlbumsData
+                            : fetchedAlbumsData.filter((album) => album.mood === selectedMood.name)
+                    }
+                />
+            </>
+        )}
+    </div>
+);
+
 }
 
-export default App
+export default App;
