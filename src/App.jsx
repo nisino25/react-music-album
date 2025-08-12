@@ -6,11 +6,11 @@ import './loader.css'; // we’ll put your loader CSS here
 function App() {
     const moods = [
         { name: 'Everything', emoji: '🌀' },
-        { name: 'Morning', emoji: '🌞' },
         { name: 'Work', emoji: '💼' },
         { name: 'Workout', emoji: '🏋️‍♂️' },
         { name: 'Dance', emoji: '💃' },
         { name: 'Relax', emoji: '☕' },
+        { name: 'Christmas', emoji: '🎄' },
     ];
 
     const [selectedMood, setSelectedMood] = useState(moods[0]);
