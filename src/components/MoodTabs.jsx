@@ -1,6 +1,6 @@
 function MoodTabs({ moods, selectedMood, onChangeMood }) {
   return (
-    <div className="flex gap-3 justify-center mb-6">
+    <div className="flex gap-3 justify-center pt-6 mb-6">
       {moods.map((mood) => (
         <button
           key={mood.name}
