@@ -4,7 +4,7 @@ function AlbumContainer({ albums }) {
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-12 p-4 px-20">
+    <div className="grid grid-cols-3 md:grid-cols-5 gap-6 md:gap-12 p-4 px-6 sm:px-20">
       {albums.map((album, idx) => (
         <div key={idx} className="bg-white rounded-lg shadow text-center overflow-hidden">
           <a href={album.url}>
